@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/goods_style.css">
+    <link rel="stylesheet" href="/css/tabel.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+{% endblock %}
+
+
+{% block main %}
+    <div class="profil">
+        <div class="contant">
+            <div class="product-photo">
+                <img src="/uploads/brochures/no_icon.png" alt="">
+            </div>
+            <div class="inf_cont">
+                <div class="contant_name"> {{ userE.getName() }}</div>
+                <div class="prof_inf">
+                    <p class="">Логин: </p>
+                    <p>{{ userE.getUsername() }}</p>
+                </div>
+                <div class="prof_inf">
+                    <p class="">Баланс: </p>
+                    <p>{{ userE.getBalance() }} руб.</p>
+                </div>
+                <div class="prof_inf">
+                    <p class="">Баланс с учетом ставок: </p>
+                    <p>{{ userE.getVirBalance() }} руб.</p>
+                </div>
+                <div class="prof_inf">
+                    <p class="">Потрачено: </p>
+                    <p>{{SpentMoney }} руб.</p>
+                </div>
+
+                <div class="prof_inf btw_con">
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
+
+        {{ form_start(userForm, {
+            label: 'Логин',
+            'attr': {'class':'form_reg'}}) }}
+        <div class="container2">
+            <hr>
+            {{ form_row(userForm.name, {
+                label: 'ФИО',
+                'attr': {'class':'poleinput'}
+            }) }}
+
+            <button type="submit" class="registerbtn">Поменять</button>
+
+        </div>
+        <hr>
+        {{ form_end(userForm) }}
+    {% endif %}
+
+
+
+    <table class="main_rows">
+        <thead class="name_rows">
+        <tr>
+            <th>Аукцион</th>
+            <th>Платеж</th>
+            <th>Статус аукциона</th>
+            <th>Итог</th>
+        <tr>
+        </thead>
+        <tbody>
+
+        {% for a  in arr %}
+            <tr class ="boss_index_table_offline">
+
+                <td> <a href="/good/view/{{ a.0.getId() }}" class = " "> {{ a.0.getName() }}</a></td>
+                <td>{{ a.1 }} руб.</td>
+                <td>{{ a.2 }} </td>
+                <td><b>{% if a.3 == userE %} Выигран {% endif %}</b></td>
+            </tr>
+        {% endfor %}
+        <tbody>
+    </table>
+    <hr>
+{% endblock %}

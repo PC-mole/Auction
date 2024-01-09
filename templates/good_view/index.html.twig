@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Лот: {{ good.name }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/goods_style.css">
+
+    <link rel="stylesheet" href="/css/tabel.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+{% endblock %}
+
+
+{% block main %}
+  <div class="profil">
+    <div class="contant">
+        <div class="product-photo">
+            <img src="/uploads/brochures/{{ good.images }}" alt="">
+        </div>
+        <div class="inf_cont">
+            <div class="contant_name"> {{ good.name }}</div>
+
+            <div class="prof_inf">
+                <p class="">Начальная стоимость: </p>
+                <p>{{ good.cost }} руб</p>
+            </div>
+
+            <div class="prof_inf">
+                <p class="">Моментальный выкуп: </p>
+                <p>{{ good.costmax}}  руб</p>
+            </div>
+
+            <div class="prof_inf">
+                <p class="">Последняя ставка: </p>
+                <p>{{ lastBet }} руб</p>
+            </div>
+
+            <div class="prof_inf">
+                <p class="">Дата окончания лота: </p>
+                <p>{{ good.lastdate|date('d-m-Y') }}</p>
+            </div>
+
+            {% if is_granted('ROLE_ADMIN') and good.status == 0 %}
+            <div class="prof_inf btw_con">
+
+                {% if lastBet != 0 %}
+                <a href="/good/exit/{{ good.id }}" class = "btw_box">Завершить</a>
+                {% endif %}
+
+                <a href="/good/cancel/{{ good.id }}" class = "btw_box">Отменить</a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% if good.status != 2%}
+    {% if msg %}
+        <p class="msg">Товар выкуплен пользователем: {{ msg.username }}</p>
+    {% else %}
+        {{ form_start(goodForm, {
+            'attr': {'class':'form_reg'}}) }}
+        <div class="container2">
+             <hr>
+            {{ form_row(goodForm.pay, {
+                'attr': {'class':'poleinput'}
+            }) }}
+            {% if error %}
+                <p class="msg">{{ error }}</p>
+            {% endif %}
+            <button type="submit" class="registerbtn">Сделать ставку</button>
+
+        </div>
+        <hr>
+        {{ form_end(goodForm) }}
+    {% endif %}
+{% else %}
+    <p class="msg">Товар отменен </p>
+{% endif%}
+
+    <hr>
+    <table class="main_rows">
+        <thead class="name_rows">
+        <tr>
+            <th>Пользователь</th>
+            <th>История</th>
+            <th>Сумма</th>
+            <th>Дата</th>
+        <tr>
+        </thead>
+        <tbody>
+
+        {% for Transaction in Transactions %}
+        <tr class ="boss_index_table_offline">
+            <td><b>{{ Transaction.getUserId().getUsername() }}</b></td>
+            <td>Сделал ставку</td>
+            <td><b>{{ Transaction.pay }}</b></td>
+
+
+            <td>{{ Transaction.date|date('d-m-Y H:i') }}</td>
+        </tr>
+        {% endfor %}
+        <tbody>
+    </table>
+    <hr>
+
+
+{% endblock %}
